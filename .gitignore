@@ -1,0 +1,8 @@
+# Mappar för kompilerade filer och liknande
+bin/
+obj/
+
+# Visual Studio-specifika filer
+.vs/
+*.user
+*.suo
