@@ -21,6 +21,10 @@ class Program
     }
     static void ShowMenu()
     {
+
+
+
+        
         while (true)
         {
             Console.Clear();
@@ -35,7 +39,7 @@ class Program
             Console.Write("Välj ett alternativ (1-5): ");
             while (!int.TryParse(Console.ReadLine(), out input) || input < 1 || input > 5)
             {
-                Console.Write("Ogiltigt val, försök igen (1-5): ");
+                Console.Write("~ Ogiltigt val, försök igen (1-5): ");
             }
             switch (input)
             {
@@ -58,7 +62,7 @@ class Program
                     Console.WriteLine("Tack för besöket! Hej då!");
                     return;
                 default:
-                    Console.WriteLine("Ogiltigt val, försök igen.");
+                    Console.WriteLine("~ Ogiltigt val, försök igen.");
                     break;
             }
         }
@@ -73,6 +77,8 @@ class Program
         }
 
     }
+
+    
     static void SelectMovieAndTickets()
     {
         Console.Clear();
@@ -89,7 +95,7 @@ class Program
             }
             else
             {
-                Console.Write("Ogiltigt val, försök igen (1-3): ");
+                Console.Write("~ Ogiltigt val, försök igen (1-3): ");
             }
         }
 
@@ -107,7 +113,7 @@ class Program
         //Select time
         while (!int.TryParse(Console.ReadLine(), out timeChoice) || timeChoice < 1 || timeChoice > showtimes.Length)
         {
-            Console.Write("Ogiltigt val, försök igen (1-3): ");
+            Console.Write("~ Ogiltigt val, försök igen (1-3): ");
         }
         selectedShowtime = showtimes[timeChoice - 1];
 
@@ -115,7 +121,7 @@ class Program
         Console.Write("Ange antal biljetter: ");
         while (!int.TryParse(Console.ReadLine(), out ticketCount) || ticketCount < 1)
         {
-            Console.Write("Ogiltigt antal, försök igen: ");
+            Console.Write("~ Ogiltigt antal, försök igen: ");
         }
 
         Console.WriteLine($"Du har valt {selectedMovie} vid {selectedShowtime} med {ticketCount} biljetter.");
@@ -144,7 +150,8 @@ class Program
     {
         if (string.IsNullOrEmpty(selectedMovie))
         {
-            Console.WriteLine("Ingen film vald. Vänligen välj en film först.");
+            Console.WriteLine("˙~ Ingen film vald. Vänligen välj en film först.");
+            Console.WriteLine("----------------");
             Console.WriteLine("Tryck på valfri tangent för att återgå till menyn.");
             Console.ReadLine();
             return;
@@ -152,13 +159,22 @@ class Program
         else
         {
             double totalPrice = CalculateTotalPrice(selectedMovie);
+            string showStudentDiscount;
+            if (hasStudentDiscount)
+            {
+                showStudentDiscount = "JA - 15% Rabatt";
+            }
+            else
+            {
+                showStudentDiscount = "Nej";
+            }
 
             Console.Clear();
             Console.WriteLine("---- Kvitto ----");
             Console.WriteLine($"Film: {selectedMovie}");
             Console.WriteLine($"Tid: {selectedShowtime}");
             Console.WriteLine($"Antal biljetter: {ticketCount}");
-            Console.WriteLine($"Studentrabatt: {hasStudentDiscount}");
+            Console.WriteLine($"Studentrabatt: {showStudentDiscount}");
             Console.WriteLine($"Totalt pris: {totalPrice} {CURRENCY}");
             Console.WriteLine("----------------");
             Console.WriteLine("Tryck på valfri tangent för att återgå till menyn.");
@@ -168,9 +184,16 @@ class Program
     public static double CalculateTotalPrice(string selectedMovie)
     {
         
+        int indexOfMovie = Array.IndexOf(movies, selectedMovie);
+        double calculatePrice =  basePrices[indexOfMovie];
 
 
-        double showTotalPrice = 0.0;
-        return showTotalPrice;
-    }
+        if (hasStudentDiscount)
+        {
+            calculatePrice += calculatePrice * (1 - STUDENT_DISCOUNT);
+        };
+
+        double showTotalPrice = calculatePrice * (1 + TAX_RATE);
+        
+        return Math.Round(showTotalPrice, 2);    }
 }
