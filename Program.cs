@@ -10,10 +10,6 @@ class Program
     const double STUDENT_DISCOUNT = 0.15;
     const string CURRENCY = "kr";
 
-    private static string selectedMovie = "";
-    private static string selectedShowtime = "";
-    private static int ticketCount;
-    private static bool hasStudentDiscount = false;
 
     static void Main(string[] args)
     {
@@ -22,6 +18,10 @@ class Program
     static void ShowMenu()
     {
 
+    string selectedMovie = "";
+    string selectedShowtime = "";
+    int ticketCount = 0;
+    bool hasStudentDiscount = false;
 
 
         
@@ -46,17 +46,20 @@ class Program
                 case 1:
                     ListMovies();
                     Console.WriteLine("--------------");
-                    Console.WriteLine("Tryck på valfri tangent för att återgå till menyn.");
+                    Console.Write("> Klicka på Enter");
                     Console.ReadLine();
                     break;
                 case 2:
-                    SelectMovieAndTickets();
+                    selectedMovie = GetMovieChoice();
+                    selectedShowtime = GetShowtimeChoice();
+                    ticketCount = GetTicketCount();
+                    SelectMovieAndTickets(selectedMovie, selectedShowtime, ticketCount);
                     break;
                 case 3:
-                    ToggleStudentDiscount();
+                    hasStudentDiscount = ToggleStudentDiscount(hasStudentDiscount);
                     break;
                 case 4:
-                    PrintReceipt();
+                    PrintReceipt(selectedMovie, selectedShowtime, ticketCount, hasStudentDiscount);
                     break;
                 case 5:
                     Console.WriteLine("Tack för besöket! Hej då!");
@@ -70,21 +73,29 @@ class Program
     static void ListMovies()
     {
         Console.Clear();
-        Console.WriteLine("----FILMER----");
+        Console.WriteLine("----- FILMER -----");
         for (int i = 0; i < movies.Length; i++)
         {
             Console.WriteLine($"{i + 1}. {movies[i]} - {showtimes[i]} - {basePrices[i]} {CURRENCY}");
         }
-
+    }
+    static void SelectMovieAndTickets(string selectedMovie, string selectedShowtime, int ticketCount)
+    {
+        Console.Clear();
+        Console.WriteLine("---- DINA VAL ----");
+        Console.WriteLine($"Du har valt {selectedMovie} kl {selectedShowtime} - {ticketCount} biljetter.");
+        Console.WriteLine("------------------");
+        Console.Write("> Klicka på Enter");
+        Console.ReadLine();
     }
 
-    
-    static void SelectMovieAndTickets()
+    static string GetMovieChoice()
     {
         Console.Clear();
         ListMovies();
         Console.Write("Ange filmnummer (1-3): ");
 
+        string selectedMovie;
         int movieChoice;
         //Select movie
         while (true)
@@ -108,7 +119,13 @@ class Program
             Console.WriteLine($"{i + 1}. {showtimes[i]}");
         }
         Console.Write("> ");
+        
+        return selectedMovie;
+    }
 
+    static string GetShowtimeChoice()
+    {
+        string selectedShowtime;
         int timeChoice;
         //Select time
         while (!int.TryParse(Console.ReadLine(), out timeChoice) || timeChoice < 1 || timeChoice > showtimes.Length)
@@ -116,22 +133,25 @@ class Program
             Console.Write("~ Ogiltigt val, försök igen (1-3): ");
         }
         selectedShowtime = showtimes[timeChoice - 1];
+        return selectedShowtime;
+    }
 
+    static int GetTicketCount()
+    {
+        int ticketCount;
         //Select number of tickets
         Console.Write("Ange antal biljetter: ");
         while (!int.TryParse(Console.ReadLine(), out ticketCount) || ticketCount < 1)
         {
             Console.Write("~ Ogiltigt antal, försök igen: ");
         }
-
-        Console.WriteLine($"Du har valt {selectedMovie} vid {selectedShowtime} med {ticketCount} biljetter.");
-        Console.WriteLine("--------------");
-        Console.WriteLine("Tryck på valfri tangent för att återgå till menyn.");
-        Console.ReadLine();
+        return ticketCount;
     }
-    static void ToggleStudentDiscount()
-    {
 
+
+    static bool ToggleStudentDiscount(bool hasStudentDiscount)
+    {
+        Console.Clear();
         if (hasStudentDiscount == !true)
         {
             hasStudentDiscount = true;
@@ -143,30 +163,35 @@ class Program
             Console.WriteLine("Du har avaktiverat din studentrabatt.");
         }
         Console.WriteLine("--------------");
-        Console.WriteLine("Tryck på valfri tangent för att återgå till menyn.");
+        Console.WriteLine("> Klicka på Enter");
         Console.ReadLine();
+        return hasStudentDiscount;
     }
-    static void PrintReceipt()
+
+    static void PrintReceipt(string selectedMovie, string selectedShowtime, int ticketCount, bool hasStudentDiscount)
     {
+        Console.Clear();
         if (string.IsNullOrEmpty(selectedMovie))
         {
             Console.WriteLine("˙~ Ingen film vald. Vänligen välj en film först.");
             Console.WriteLine("----------------");
-            Console.WriteLine("Tryck på valfri tangent för att återgå till menyn.");
+            Console.WriteLine("> Klicka på Enter");
             Console.ReadLine();
             return;
         }
         else
         {
-            double totalPrice = CalculateTotalPrice(selectedMovie);
             string showStudentDiscount;
+            double totalPrice;
             if (hasStudentDiscount)
             {
                 showStudentDiscount = "JA - 15% Rabatt";
+                totalPrice = CalculateTotalPrice(selectedMovie, ticketCount, hasStudentDiscount);
             }
             else
             {
                 showStudentDiscount = "Nej";
+                totalPrice = CalculateTotalPrice(selectedMovie, ticketCount);
             }
 
             Console.Clear();
@@ -177,23 +202,35 @@ class Program
             Console.WriteLine($"Studentrabatt: {showStudentDiscount}");
             Console.WriteLine($"Totalt pris: {totalPrice} {CURRENCY}");
             Console.WriteLine("----------------");
-            Console.WriteLine("Tryck på valfri tangent för att återgå till menyn.");
+            Console.WriteLine("> Klicka på Enter");
             Console.ReadLine();
         }
     }
-    public static double CalculateTotalPrice(string selectedMovie)
+    public static double CalculateTotalPrice(string selectedMovie, int ticketCount)
     {
-        
+    
         int indexOfMovie = Array.IndexOf(movies, selectedMovie);
-        double calculatePrice =  basePrices[indexOfMovie];
+        double calculatePrice =  ticketCount * basePrices[indexOfMovie];
 
-
-        if (hasStudentDiscount)
-        {
-            calculatePrice += calculatePrice * (1 - STUDENT_DISCOUNT);
-        };
 
         double showTotalPrice = calculatePrice * (1 + TAX_RATE);
         
-        return Math.Round(showTotalPrice, 2);    }
+        return Math.Round(showTotalPrice, 2);    
+    }
+
+        public static double CalculateTotalPrice(string selectedMovie, int ticketCount, bool hasStudentDiscount)
+    {
+    
+        int indexOfMovie = Array.IndexOf(movies, selectedMovie);
+        double calculatePrice =  ticketCount * basePrices[indexOfMovie];
+        
+        if (hasStudentDiscount)
+        {
+        calculatePrice += calculatePrice * (1 - STUDENT_DISCOUNT);
+        }
+        
+        double showTotalPrice = calculatePrice * (1 + TAX_RATE);
+        
+        return Math.Round(showTotalPrice, 2);    
+    }
 }
