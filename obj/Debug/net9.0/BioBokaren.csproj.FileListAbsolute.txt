@@ -12,3 +12,4 @@
 /Users/josefanderberg/source/repos/BioBokaren/obj/Debug/net9.0/BioBokaren.pdb
 /Users/josefanderberg/source/repos/BioBokaren/obj/Debug/net9.0/BioBokaren.genruntimeconfig.cache
 /Users/josefanderberg/source/repos/BioBokaren/obj/Debug/net9.0/ref/BioBokaren.dll
+/Users/josefanderberg/source/repos/BioBokaren/obj/Debug/net9.0/BioBokaren.sourcelink.json
