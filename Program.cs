@@ -152,6 +152,8 @@ class Program
     static bool ToggleStudentDiscount(bool hasStudentDiscount)
     {
         Console.Clear();
+        Console.WriteLine("--------------");
+
         if (hasStudentDiscount == !true)
         {
             hasStudentDiscount = true;
@@ -163,7 +165,7 @@ class Program
             Console.WriteLine("Du har avaktiverat din studentrabatt.");
         }
         Console.WriteLine("--------------");
-        Console.WriteLine("> Klicka på Enter");
+        Console.Write("> Klicka på Enter");
         Console.ReadLine();
         return hasStudentDiscount;
     }
@@ -173,9 +175,10 @@ class Program
         Console.Clear();
         if (string.IsNullOrEmpty(selectedMovie))
         {
+            Console.WriteLine("----------------");
             Console.WriteLine("˙~ Ingen film vald. Vänligen välj en film först.");
             Console.WriteLine("----------------");
-            Console.WriteLine("> Klicka på Enter");
+            Console.Write("> Klicka på Enter");
             Console.ReadLine();
             return;
         }
@@ -194,43 +197,42 @@ class Program
                 totalPrice = CalculateTotalPrice(selectedMovie, ticketCount);
             }
 
+            // Beräkna pris exklusive moms och momsbelopp direkt i metoden
+            double priceExclTax = totalPrice / (1 + TAX_RATE);
+            double taxAmount = totalPrice - priceExclTax;
+
             Console.Clear();
             Console.WriteLine("---- Kvitto ----");
             Console.WriteLine($"Film: {selectedMovie}");
             Console.WriteLine($"Tid: {selectedShowtime}");
             Console.WriteLine($"Antal biljetter: {ticketCount}");
             Console.WriteLine($"Studentrabatt: {showStudentDiscount}");
+            Console.WriteLine("----------------");
+            Console.WriteLine($"Pris exkl. moms: {Math.Round(priceExclTax, 2)} {CURRENCY}");
+            Console.WriteLine($"Moms (6%): {Math.Round(taxAmount, 2)} {CURRENCY}");
             Console.WriteLine($"Totalt pris: {totalPrice} {CURRENCY}");
             Console.WriteLine("----------------");
-            Console.WriteLine("> Klicka på Enter");
+            Console.Write("> Klicka på Enter");
             Console.ReadLine();
         }
     }
-    public static double CalculateTotalPrice(string selectedMovie, int ticketCount)
+    static double CalculateTotalPrice(string selectedMovie, int ticketCount)
     {
-    
         int indexOfMovie = Array.IndexOf(movies, selectedMovie);
-        double calculatePrice =  ticketCount * basePrices[indexOfMovie];
-
-
-        double showTotalPrice = calculatePrice * (1 + TAX_RATE);
-        
-        return Math.Round(showTotalPrice, 2);    
+        double calculatePrice = ticketCount * basePrices[indexOfMovie];
+        return Math.Round(calculatePrice, 2);
     }
 
-        public static double CalculateTotalPrice(string selectedMovie, int ticketCount, bool hasStudentDiscount)
+    static double CalculateTotalPrice(string selectedMovie, int ticketCount, bool hasStudentDiscount)
     {
-    
         int indexOfMovie = Array.IndexOf(movies, selectedMovie);
-        double calculatePrice =  ticketCount * basePrices[indexOfMovie];
+        double calculatePrice = ticketCount * basePrices[indexOfMovie];
         
         if (hasStudentDiscount)
         {
-        calculatePrice += calculatePrice * (1 - STUDENT_DISCOUNT);
+            calculatePrice = calculatePrice * (1 - STUDENT_DISCOUNT);
         }
         
-        double showTotalPrice = calculatePrice * (1 + TAX_RATE);
-        
-        return Math.Round(showTotalPrice, 2);    
+        return Math.Round(calculatePrice, 2);    
     }
 }
