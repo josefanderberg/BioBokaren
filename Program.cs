@@ -23,8 +23,6 @@ class Program
     int ticketCount = 0;
     bool hasStudentDiscount = false;
 
-
-        
         while (true)
         {
             Console.Clear();
