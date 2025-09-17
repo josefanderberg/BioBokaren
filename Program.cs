@@ -36,6 +36,8 @@ class Program
             {
                 case 1:
                     ListMovies();
+                    Console.WriteLine("Tryck på valfri tangent för att återgå till menyn.");
+                    Console.ReadLine();
                     break;
                 case 2:
                     SelectMovieAndTickets();
@@ -63,14 +65,13 @@ class Program
         {
             Console.WriteLine($"{i + 1}. {movies[i]} - {showtimes[i]} - {basePrices[i]} {CURRENCY}");
         }
-        Console.WriteLine("\nTryck på valfri tangent för att återgå till menyn.");
-        Console.ReadLine();
+
     }
     static void SelectMovieAndTickets()
     {
         Console.Clear();
         ListMovies();
-        Console.Write("\nAnge filmnummer (1-3):");
+        Console.Write("Ange filmnummer (1-3):");
 
         int movieChoice;
         //Selcet movie
